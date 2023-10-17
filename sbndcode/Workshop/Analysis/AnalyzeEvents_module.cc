@@ -103,8 +103,6 @@ void test::AnalyzeEvents::analyze(art::Event const& e)
   int nuID = -1;
   int nuSliceKey = -1;
 
-  std::cout << "NEW EVENT" << std::endl;
-
   for (const art::Ptr<recob::Slice> &slice : sliceVector)
   {
       std::vector<art::Ptr<recob::PFParticle>> slicePFPs(slicePFPAssoc.at(slice.key()));
@@ -119,7 +117,7 @@ void test::AnalyzeEvents::analyze(art::Event const& e)
 
           // We have found our neutrino!
           nuSliceKey = slice.key();
-          nuID = slicePFP.key();
+          nuID = slicePFP->Self();
           fNPFParticles = slicePFPs.size();
           fNPrimaryChildren = slicePFP->NumDaughters();
 
@@ -131,7 +129,8 @@ void test::AnalyzeEvents::analyze(art::Event const& e)
   }
 
   // Now let's look at our tracks
-  art::ValidHandle<std::vector<recob::PFParticle>> pfpHandle = e.getValidHandle<std::vector<recob::PFParticle>>(fPFParticleLabel);
+  art::ValidHandle<std::vector<recob::PFParticle>> pfpHandle = 
+      e.getValidHandle<std::vector<recob::PFParticle>>(fPFParticleLabel);
   art::FindManyP<recob::Track> pfpTrackAssoc(pfpHandle, e, fTrackLabel);
 
   std::vector<art::Ptr<recob::PFParticle>> nuSlicePFPs(slicePFPAssoc.at(nuSliceKey));
